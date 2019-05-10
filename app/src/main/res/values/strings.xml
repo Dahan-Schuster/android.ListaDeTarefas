@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Lista De Tarefas Bunitinhas</string>
     <string name="action_settings">Settings</string>
+    <string name="task">Tarefa</string>
+    <string name="menu_item_salvar">Salvar</string>
+    <string name="titulo_nova_tarefa">Nova Tarefa</string>
+    <string name="titulo">Titulo</string>
+    <string name="tag">Tag</string>
+    <string name="tarefa_salva">Tarefa adicionada com sucesso!</string>
+    <string name="erro_ao_salvar">Erro ao salvar a tarefa.</string>
 </resources>
