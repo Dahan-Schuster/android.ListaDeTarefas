@@ -11,24 +11,18 @@ import java.util.ArrayList;
 public class Task {
 
     private int ID;
-    private boolean isDone;
     private String title;
     private String tag;
 
 
-    public Task(int id, boolean isDone, String title, String tag) {
+    public Task(int id, String title, String tag) {
         this.ID = id;
-        this.isDone = isDone;
         this.title = title;
         this.tag = tag;
     }
 
     public int getID() {
         return ID;
-    }
-
-    public boolean isDone() {
-        return isDone;
     }
 
     public String getTitle() {
@@ -46,18 +40,21 @@ public class Task {
     public static ArrayList<Task> recuperarTarefas() {
 
         ArrayList<Task> tarefas = new ArrayList<>();
-        tarefas.add(new Task(0, false, "Adicione novas tarefas!", "ToDo"));
         try {
 
             String consulta = "SELECT * FROM " + TarefasDataBase.TABLE_TASKS_NAME;
             Cursor cursor = TarefasDataBase.database.rawQuery(consulta, null);
 
-            cursor.moveToFirst();
-            tarefas.clear();
-            while (cursor != null) {
-                tarefas.add(instanciarTaskPorTupla(cursor));
+            if (cursor.getCount() == 0){
 
+                tarefas.add(new Task(0, "Adicione novas tarefas!", "ToDo"));
+
+            } else {
+                cursor.moveToFirst();
+                while (cursor != null) {
+                    tarefas.add(instanciarTaskPorTupla(cursor));
                     cursor.moveToNext();
+                }
             }
 
         } catch (Exception e) {
@@ -79,16 +76,13 @@ public class Task {
         int columnIdPosition = cursor.getColumnIndex("id");
         int id = cursor.getInt(columnIdPosition);
 
-        int columnFeitaPosition = cursor.getColumnIndex("feita");
-        boolean isDone = cursor.getInt(columnFeitaPosition) == 1 ? true : false;
-
         int columnTituloPosition = cursor.getColumnIndex("titulo");
         String title = cursor.getString(columnTituloPosition);
 
         int columnTagPosition = cursor.getColumnIndex("tag");
         String tag = cursor.getString(columnTagPosition);
 
-        return new Task(id, isDone, title, tag);
+        return new Task(id, title, tag);
     }
 
     /** Recupera uma <i>task</i> individual com o id enviado,<br> ou <i>null</i> se nenhuma for encontrada
@@ -112,14 +106,16 @@ public class Task {
         }
     }
 
-    public boolean adicionar() {
-
+    public boolean adicionarOuAtualizar() {
         if (this.getID() > 0)
             return atualizar(this.getID());
 
+        return adicionar();
+    }
+
+    private boolean adicionar() {
         try {
-            String sql = String.format("INSERT INTO " + TarefasDataBase.TABLE_TASKS_NAME + "(feita, titulo, tag) VALUES(%s, '%s', '%s')",
-                    (this.isDone ? "1" : "0"),
+            String sql = String.format("INSERT INTO " + TarefasDataBase.TABLE_TASKS_NAME + "(titulo, tag) VALUES('%s', '%s')",
                     this.title,
                     this.tag);
             TarefasDataBase.database.execSQL(sql);
@@ -127,13 +123,14 @@ public class Task {
         } catch (Exception e) {
             return false;
         }
-
-
     }
 
-    public boolean deletar(int id) {
+    private boolean atualizar(int id) {
         try {
-            String sql = String.format("DELETE FROM" + TarefasDataBase.TABLE_TASKS_NAME + " WHERE ID = %d", id);
+            String sql = String.format("UPDATE " + TarefasDataBase.TABLE_TASKS_NAME + " SET titulo = '%s', tag = '%s' WHERE ID = %d",
+                    this.title,
+                    this.tag,
+                    id);
             TarefasDataBase.database.execSQL(sql);
             return true;
         } catch (Exception e) {
@@ -141,12 +138,10 @@ public class Task {
         }
     }
 
-    public boolean atualizar(int id) {
+
+    public static boolean deletar(int id) {
         try {
-            String sql = String.format("UPDATE " + TarefasDataBase.TABLE_TASKS_NAME + " SET feita = %s, titulo = '%s', tag '%s'",
-                    (this.isDone ? "1" : "0"),
-                    this.title,
-                    this.tag);
+            String sql = String.format("DELETE FROM " + TarefasDataBase.TABLE_TASKS_NAME + " WHERE ID = %d", id);
             TarefasDataBase.database.execSQL(sql);
             return true;
         } catch (Exception e) {

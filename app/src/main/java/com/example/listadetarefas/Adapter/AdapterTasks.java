@@ -20,18 +20,17 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks. ViewHolderT
     /** ViewHolder */
     public class ViewHolderTasks extends RecyclerView.ViewHolder {
 
-        CheckBox feita;
-        TextView titulo;
-        TextView tag;
+        public TextView titulo;
+        public TextView tag;
         /** Construtor */
         public ViewHolderTasks(@NonNull View itemView) {
             super(itemView);
 
-            feita = itemView.findViewById(R.id.checkTask);
             titulo = itemView.findViewById(R.id.textTitulo);
             tag = itemView.findViewById(R.id.textTag);
         }
     }
+
 
 
     /** Atributos */
@@ -78,9 +77,7 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks. ViewHolderT
         String title = task.getTitle();
         String tag = task.getTag();
 
-        viewHolderTasks.feita.setChecked(task.isDone());
         viewHolderTasks.titulo.setText(title);
-        viewHolderTasks.titulo.setTextColor(task.isDone() ? R.color.taskDone : R.color.taskTodo);
         viewHolderTasks.tag.setText(tag);
     }
 

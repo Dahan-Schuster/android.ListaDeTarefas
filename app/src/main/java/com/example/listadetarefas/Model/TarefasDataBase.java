@@ -21,7 +21,6 @@ public class TarefasDataBase {
     public static void createTables() {
         database.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_TASKS_NAME + " (" +
                 "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                "feita INT(1)," +
                 "titulo varchar(255)," +
                 "tag varchar (255))");
     }

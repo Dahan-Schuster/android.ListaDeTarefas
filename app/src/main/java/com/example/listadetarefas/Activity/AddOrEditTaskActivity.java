@@ -1,5 +1,6 @@
 package com.example.listadetarefas.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -12,10 +13,14 @@ import android.widget.Toast;
 import com.example.listadetarefas.Model.Task;
 import com.example.listadetarefas.R;
 
-public class NovaTarefaActivity extends AppCompatActivity {
+public class AddOrEditTaskActivity extends AppCompatActivity {
 
     private TextInputEditText editTitulo;
     private TextInputEditText editTag;
+    private int taskId;
+    private boolean taskIsDone= false;
+
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +29,23 @@ public class NovaTarefaActivity extends AppCompatActivity {
 
         editTitulo = findViewById(R.id.editTextTitulo);
         editTag = findViewById(R.id.editTextTag);
+
+        taskId  = getIntent().getExtras().getInt("taskId");
+
+        atualizarEditTexts();
+
+    }
+
+    private void atualizarEditTexts() {
+        try {
+            if (taskId > 0) {
+                Task task = Task.recuperarTarefaPorId(taskId);
+                editTitulo.setText(task.getTitle());
+                editTag.setText(task.getTag());
+            }
+        } catch (Exception e) {
+            // Handle ?
+        }
 
     }
 
@@ -40,6 +62,9 @@ public class NovaTarefaActivity extends AppCompatActivity {
             case R.id.salvar:
                 salvar();
                 return true;
+            case R.id.excluir:
+                excluir();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -49,22 +74,31 @@ public class NovaTarefaActivity extends AppCompatActivity {
         try {
             String titulo = editTitulo.getText().toString();
             String tag = editTag.getText().toString();
-            boolean isFeita = false;
 
-            Task task = new Task(0, isFeita, titulo, tag);
-            task.adicionar();
+            Task task = new Task(taskId, titulo, tag);
+            task.adicionarOuAtualizar();
 
-            Toast.makeText(getApplicationContext(), getString(R.string.tarefa_salva), Toast.LENGTH_LONG);
-            abrirTelaPrincipal();
+            doDefaultToast(getApplicationContext(), getString(R.string.feito));
+            finish();
 
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), getString(R.string.erro_ao_salvar), Toast.LENGTH_LONG);
+            doDefaultToast(getApplicationContext(), getString(R.string.erro_ao_salvar));
         }
     }
 
-    private void abrirTelaPrincipal() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        this.finish();
+    private void excluir() {
+        try {
+            Task.deletar(taskId);
+            doDefaultToast(getApplicationContext(), getString(R.string.feito));
+            finish();
+        } catch (Exception e) {
+            doDefaultToast(getApplicationContext(), getString(R.string.erro_ao_excluir));
+        }
     }
+
+    public static void doDefaultToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+
 }
