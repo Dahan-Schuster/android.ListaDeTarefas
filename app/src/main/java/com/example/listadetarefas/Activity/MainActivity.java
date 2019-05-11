@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.listadetarefas.Adapter.AdapterTasks;
-import com.example.listadetarefas.Model.TarefasDataBase;
+import com.example.listadetarefas.Helper.TaskDAO;
 import com.example.listadetarefas.Model.Task;
 import com.example.listadetarefas.R;
 import com.example.listadetarefas.events.RecyclerItemClickListener;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        recuperarDadosDoBanco();
+        recuperarListaTarefas();
 
         recyclerTasks = findViewById(R.id.recyclerTasks);
         adapterTasks = new AdapterTasks(tasks);
@@ -55,26 +55,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
     protected void onResume() {
+        recuperarListaTarefas();
+        adapterTasks.notifyDataSetChanged();
         super.onResume();
-        atualizarDados();
     }
 
-    private void atualizarDados() {
-        recuperarDadosDoBanco();
-        atualizarAdapterItemList();
-    }
-
-    private void atualizarAdapterItemList() {
-        adapterTasks = new AdapterTasks(tasks);
-        recyclerTasks.setAdapter(adapterTasks);
-    }
-
-    private void recuperarDadosDoBanco() {
-        TarefasDataBase.conectar(getApplicationContext());
-        tasks = Task.recuperarTarefas();
+    private void recuperarListaTarefas() {
+        TaskDAO taskDAO = new TaskDAO(getApplicationContext());
+        tasks = taskDAO.listar();
     }
 
     private void configurarRecycler() {
@@ -134,9 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void excluir(int taskId) {
         try {
-            Task.deletar(taskId);
-            atualizarDados();
-            Toast.makeText(getApplicationContext(), getString(R.string.feito), Toast.LENGTH_LONG).show();
+            // TODO excluir()
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), getString(R.string.erro_ao_excluir), Toast.LENGTH_LONG).show();
         }

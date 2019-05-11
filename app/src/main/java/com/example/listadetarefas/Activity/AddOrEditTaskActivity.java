@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.listadetarefas.Helper.TaskDAO;
 import com.example.listadetarefas.Model.Task;
 import com.example.listadetarefas.R;
 
@@ -32,14 +33,16 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
 
         taskId  = getIntent().getExtras().getInt("taskId");
 
-        atualizarEditTexts();
+       // atualizarEditTexts();
 
     }
-
+    /*
     private void atualizarEditTexts() {
         try {
             if (taskId > 0) {
-                Task task = Task.recuperarTarefaPorId(taskId);
+
+
+
                 editTitulo.setText(task.getTitle());
                 editTag.setText(task.getTag());
             }
@@ -48,6 +51,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
         }
 
     }
+    */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,11 +76,15 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
 
     private void salvar() {
         try {
+
+            TaskDAO taskDAO = new TaskDAO(getApplicationContext());
+
             String titulo = editTitulo.getText().toString();
             String tag = editTag.getText().toString();
 
             Task task = new Task(taskId, titulo, tag);
-            task.adicionarOuAtualizar();
+
+            taskDAO.salvar(task);
 
             doDefaultToast(getApplicationContext(), getString(R.string.feito));
             finish();
@@ -88,7 +96,10 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
 
     private void excluir() {
         try {
-            Task.deletar(taskId);
+            TaskDAO taskDAO = new TaskDAO(getApplicationContext());
+
+            taskDAO.deletar(taskId);
+
             doDefaultToast(getApplicationContext(), getString(R.string.feito));
             finish();
         } catch (Exception e) {
