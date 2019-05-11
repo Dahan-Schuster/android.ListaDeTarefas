@@ -6,6 +6,12 @@
     <string name="titulo_nova_tarefa">Nova Tarefa</string>
     <string name="titulo">Titulo</string>
     <string name="tag">Tag</string>
-    <string name="tarefa_salva">Tarefa adicionada com sucesso!</string>
     <string name="erro_ao_salvar">Erro ao salvar a tarefa.</string>
+    <string name="excluir">Excluir</string>
+    <string name="erro_ao_excluir">Erro ao excluir.</string>
+    <string name="feito">Feito!</string>
+    <string name="confirmar_excluir">Excluir tarefa?</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="cancelada">Operação concelada.</string>
 </resources>
